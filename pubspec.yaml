@@ -1,0 +1,35 @@
+name: marvel_visualiser
+description: A new Flutter project.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.18.6 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  http: ^0.13.5
+  crypto: ^3.0.2
+  freezed: ^2.3.2
+  freezed_annotation: ^2.2.0
+  json_serializable: ^6.5.4
+  flutter_riverpod: ^2.1.3
+  riverpod_annotation: ^1.1.1
+  json_annotation: ^4.8.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  build_runner: ^2.3.3
+  riverpod_generator: ^1.1.1
+
+flutter:
+  uses-material-design: true
+  assets:     
+    - assets/images/
