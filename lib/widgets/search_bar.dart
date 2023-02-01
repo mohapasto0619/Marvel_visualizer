@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:marvel_visualiser/core/utils/debouncer.dart';
 
 class SearchBar extends StatefulWidget {
   const SearchBar({Key? key, required this.search}) : super(key: key);
@@ -10,15 +11,23 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   late TextEditingController textEditingController;
-
+  final _debouncer = Debouncer(milliseconds: 600);
   @override
   void initState() {
     super.initState();
     textEditingController = TextEditingController();
 
     textEditingController.addListener(() {
-      widget.search(textEditingController.text);
+      _debouncer.run(() {
+        widget.search(textEditingController.text);
+      });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _debouncer.dispose();
   }
 
   @override
@@ -28,7 +37,6 @@ class _SearchBarState extends State<SearchBar> {
       child: TextField(
         style: const TextStyle(color: Colors.redAccent),
         controller: textEditingController,
-        //onChanged: (value) => widget.search(value),
         decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.never,
           enabledBorder: UnderlineInputBorder(

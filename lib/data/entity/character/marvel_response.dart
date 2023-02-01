@@ -1,8 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:marvel_visualiser/data/entity/character/data.dart';
 import 'dart:convert';
-
-import 'package:marvel_visualiser/data/entity/data.dart';
-
 part 'marvel_response.freezed.dart';
 part 'marvel_response.g.dart';
 

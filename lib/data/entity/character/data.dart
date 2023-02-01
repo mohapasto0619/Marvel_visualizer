@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:marvel_visualiser/data/entity/result.dart';
+import 'package:marvel_visualiser/data/entity/character/result.dart';
 
 part 'data.freezed.dart';
 part 'data.g.dart';

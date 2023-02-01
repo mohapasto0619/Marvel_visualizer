@@ -1,6 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:marvel_visualiser/data/entity/url.dart';
-import 'package:marvel_visualiser/data/entity/utils.dart';
 
 part 'stories_item.freezed.dart';
 part 'stories_item.g.dart';

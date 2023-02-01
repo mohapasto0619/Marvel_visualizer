@@ -7,17 +7,11 @@ part of 'url.dart';
 // **************************************************************************
 
 _$_Url _$$_UrlFromJson(Map<String, dynamic> json) => _$_Url(
-      type: $enumDecodeNullable(_$UrlTypeEnumMap, json['type']),
+      type: json['type'] as String?,
       url: json['url'] as String?,
     );
 
 Map<String, dynamic> _$$_UrlToJson(_$_Url instance) => <String, dynamic>{
-      'type': _$UrlTypeEnumMap[instance.type],
+      'type': instance.type,
       'url': instance.url,
     };
-
-const _$UrlTypeEnumMap = {
-  UrlType.DETAIL: 'DETAIL',
-  UrlType.WIKI: 'WIKI',
-  UrlType.COMICLINK: 'COMICLINK',
-};

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:marvel_visualiser/data/entity/marvel_response.dart';
-import 'package:marvel_visualiser/data/entity/result.dart';
+import 'package:marvel_visualiser/data/entity/character/marvel_response.dart';
+import 'package:marvel_visualiser/data/entity/character/result.dart';
 import 'package:marvel_visualiser/module/app/app.dart';
 import 'package:marvel_visualiser/widgets/search_bar.dart';
+import '../../widgets/infinite_scroll_view.dart';
 
 final _offsetProvider = StateProvider<int>(((ref) => 0));
 
 final _searchTextProvider = StateProvider<String>(((ref) => ''));
 
 final _charactersProvider = FutureProvider<MarvelResponse?>(((ref) {
-  print('make call');
   final characterRepository = ref.read(characterRepositoryProvider);
   final offset = ref.watch(_offsetProvider);
   final searchText = ref.watch(_searchTextProvider);
@@ -18,8 +18,7 @@ final _charactersProvider = FutureProvider<MarvelResponse?>(((ref) {
 }));
 
 class CharactersView extends ConsumerStatefulWidget {
-  const CharactersView({super.key, required this.title});
-  final String title;
+  const CharactersView({super.key});
 
   @override
   CharactersViewState createState() => CharactersViewState();
@@ -33,26 +32,16 @@ class CharactersViewState extends ConsumerState<CharactersView> {
   @override
   void initState() {
     super.initState();
-
     _scrollController = ScrollController();
-
-    _scrollController.addListener(() {
-      if (_scrollController.position.maxScrollExtent ==
-          _scrollController.position.pixels) {
-        ref.read(_offsetProvider.notifier).state += 20;
-      }
-    });
   }
 
   @override
   void dispose() {
     super.dispose();
-    _scrollController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print('Rebuild');
     final charactersResponse = ref.watch(_charactersProvider);
     charactersResponse.when(
         data: (characters) {
@@ -66,85 +55,116 @@ class CharactersViewState extends ConsumerState<CharactersView> {
         },
         error: (error, stackTrace) =>
             errorMessage = 'An error Occured can\'t load characters ');
-    return Scaffold(
-        backgroundColor: Colors.redAccent,
-        body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                  flex: 1,
-                  child: SearchBar(search: (String value) {
-                    ref.read(_offsetProvider.notifier).state = 0;
-                    ref.read(_searchTextProvider.notifier).state = value;
-                    allCharacters = [];
-                  })),
-              Expanded(
-                flex: 10,
-                child: Stack(
-                  children: [
-                    GridView.builder(
-                      padding: const EdgeInsets.only(bottom: 100),
-                      controller: _scrollController,
-                      gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 300,
-                              childAspectRatio: 2 / 3,
-                              crossAxisSpacing: 5,
-                              mainAxisSpacing: 5),
-                      itemBuilder: ((context, index) {
-                        return CharacterCardView(
-                            character: allCharacters[index]!);
-                      }),
-                      itemCount: allCharacters?.length,
-                    ),
-                    if (isLoading)
-                      const Positioned.fill(
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: EdgeInsets.all(16),
-                            child: CircularProgressIndicator(
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ),
-                      )
-                  ],
-                ),
-              ),
-            ],
+    return SafeArea(
+      child: Column(
+        children: [
+          Expanded(
+              flex: 1,
+              child: SearchBar(search: (String value) {
+                if (value.isNotEmpty) {
+                  ref.read(_offsetProvider.notifier).state = 0;
+                  ref.read(_searchTextProvider.notifier).state = value;
+                  allCharacters = [];
+                }
+              })),
+          Expanded(
+            flex: 10,
+            child: (errorMessage != null)
+                ? ErrorView(message: errorMessage)
+                : InfiniteGridListView(
+                    allCharacters: allCharacters, isLoading: isLoading),
           ),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-            backgroundColor: const Color.fromARGB(209, 255, 255, 255),
-            onTap: (int newIndex) {},
-            items: const [
-              BottomNavigationBarItem(
-                  label: 'Characters', icon: Icon(Icons.tv)),
-              BottomNavigationBarItem(
-                  label: 'Comics', icon: Icon(Icons.person)),
-              BottomNavigationBarItem(label: 'Tv Shows', icon: Icon(Icons.tv)),
-            ]));
+        ],
+      ),
+    );
   }
 }
 
-class CharacterCardView extends StatelessWidget {
-  const CharacterCardView({Key? key, required this.character})
-      : super(key: key);
+class InfiniteGridListView extends ConsumerStatefulWidget {
+  const InfiniteGridListView(
+      {super.key, required this.allCharacters, required this.isLoading});
+  final List<Result> allCharacters;
+  final bool isLoading;
 
-  final Result character;
+  @override
+  InfiniteGridListViewState createState() => InfiniteGridListViewState();
+}
+
+class InfiniteGridListViewState extends ConsumerState<InfiniteGridListView> {
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final image =
-        '${character.thumbnail?.path}.${character.thumbnail?.extension}';
+    return Stack(
+      children: [
+        InfiniteScrollView(
+          scrollController: _scrollController,
+          onMaxScroll: () {
+            ref.read(_offsetProvider.notifier).state += 20;
+          },
+          child: GridView.builder(
+            padding: const EdgeInsets.only(bottom: 100),
+            controller: _scrollController,
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 300,
+                childAspectRatio: 2 / 3,
+                crossAxisSpacing: 5,
+                mainAxisSpacing: 5),
+            itemBuilder: ((context, index) {
+              return MarvelCardView(
+                title: widget.allCharacters[index].name!,
+                image:
+                    '${widget.allCharacters[index].thumbnail?.path}.${widget.allCharacters[index].thumbnail?.extension}',
+              );
+            }),
+            itemCount: widget.allCharacters?.length,
+          ),
+        ),
+        if (widget.isLoading)
+          const Positioned.fill(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: CircularProgressIndicator(
+                  color: Colors.white70,
+                ),
+              ),
+            ),
+          )
+      ],
+    );
+  }
+}
+
+class MarvelCardView extends StatelessWidget {
+  const MarvelCardView({Key? key, required this.title, required this.image})
+      : super(key: key);
+
+  final String title;
+  final String image;
+
+  @override
+  Widget build(BuildContext context) {
     const unkownImage =
         'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg';
     return Card(
       clipBehavior: Clip.antiAliasWithSaveLayer,
-      color: Color.fromARGB(209, 255, 255, 255),
+      color: const Color.fromARGB(209, 255, 255, 255),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
               flex: 6,
@@ -164,7 +184,7 @@ class CharacterCardView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  character.name ?? 'No name',
+                  title ?? 'Unkown',
                   style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
@@ -178,5 +198,16 @@ class CharacterCardView extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class ErrorView extends StatelessWidget {
+  const ErrorView({super.key, required this.message});
+  final String? message;
+  final defaultMessage = 'An error occured can\'t load data';
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text(message ?? defaultMessage));
   }
 }

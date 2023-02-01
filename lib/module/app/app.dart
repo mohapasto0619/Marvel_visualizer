@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:marvel_visualiser/data/repository/character_repository.dart';
+import 'package:marvel_visualiser/data/repository/comic_repository.dart';
+import 'package:marvel_visualiser/data/repository/event_repository.dart';
 import 'package:marvel_visualiser/data/source/api_client.dart';
-import 'package:marvel_visualiser/module/characters/view.dart';
+import 'package:marvel_visualiser/module/home/view.dart';
 
 final apiClientProvider = Provider(((ref) => ApiClient()));
 
 final characterRepositoryProvider = Provider(((ref) {
   final apiClient = ref.read(apiClientProvider);
   return CharacterRepository(apiClient: apiClient);
+}));
+
+final comicRepositoryProvider = Provider(((ref) {
+  final apiClient = ref.read(apiClientProvider);
+  return ComicRepository(apiClient: apiClient);
+}));
+
+final eventRepositoryProvider = Provider(((ref) {
+  final apiClient = ref.read(apiClientProvider);
+  return EventRepository(apiClient: apiClient);
 }));
 
 class MyApp extends StatelessWidget {
@@ -21,7 +33,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: const CharactersView(title: 'Marvel'),
+      home: const HomeView(),
     );
   }
 }

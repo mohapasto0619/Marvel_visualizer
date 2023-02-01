@@ -20,7 +20,7 @@ Url _$UrlFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Url {
-  UrlType? get type => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError;
   String? get url => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -33,7 +33,7 @@ abstract class $UrlCopyWith<$Res> {
   factory $UrlCopyWith(Url value, $Res Function(Url) then) =
       _$UrlCopyWithImpl<$Res, Url>;
   @useResult
-  $Res call({UrlType? type, String? url});
+  $Res call({String? type, String? url});
 }
 
 /// @nodoc
@@ -55,7 +55,7 @@ class _$UrlCopyWithImpl<$Res, $Val extends Url> implements $UrlCopyWith<$Res> {
       type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as UrlType?,
+              as String?,
       url: freezed == url
           ? _value.url
           : url // ignore: cast_nullable_to_non_nullable
@@ -70,7 +70,7 @@ abstract class _$$_UrlCopyWith<$Res> implements $UrlCopyWith<$Res> {
       __$$_UrlCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({UrlType? type, String? url});
+  $Res call({String? type, String? url});
 }
 
 /// @nodoc
@@ -89,7 +89,7 @@ class __$$_UrlCopyWithImpl<$Res> extends _$UrlCopyWithImpl<$Res, _$_Url>
       type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as UrlType?,
+              as String?,
       url: freezed == url
           ? _value.url
           : url // ignore: cast_nullable_to_non_nullable
@@ -106,7 +106,7 @@ class _$_Url implements _Url {
   factory _$_Url.fromJson(Map<String, dynamic> json) => _$$_UrlFromJson(json);
 
   @override
-  final UrlType? type;
+  final String? type;
   @override
   final String? url;
 
@@ -143,12 +143,12 @@ class _$_Url implements _Url {
 }
 
 abstract class _Url implements Url {
-  const factory _Url({final UrlType? type, final String? url}) = _$_Url;
+  const factory _Url({final String? type, final String? url}) = _$_Url;
 
   factory _Url.fromJson(Map<String, dynamic> json) = _$_Url.fromJson;
 
   @override
-  UrlType? get type;
+  String? get type;
   @override
   String? get url;
   @override
