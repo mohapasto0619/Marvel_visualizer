@@ -7,7 +7,7 @@ part 'comic.g.dart';
 class Comics with _$Comics {
   const factory Comics({
     int? available,
-    String? collectionUri,
+    @JsonKey(name: 'collectionURI') String? collectionUri,
     List<ComicsItem?>? items,
     int? returned,
   }) = _Comics;

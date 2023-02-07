@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:marvel_visualiser/data/entity/character/marvel_response.dart';
-import 'package:marvel_visualiser/data/entity/character/result.dart';
+import 'package:go_router/go_router.dart';
+import 'package:marvel_visualiser/data/entity/character/marvel_response.dart'
+    as character;
+import 'package:marvel_visualiser/data/entity/character/result.dart'
+    as character;
 import 'package:marvel_visualiser/module/app/app.dart';
+import 'package:marvel_visualiser/router/app_router_names.dart';
+import 'package:marvel_visualiser/router/marvel_visualizer_route.dart';
 import 'package:marvel_visualiser/widgets/search_bar.dart';
 import '../../widgets/infinite_scroll_view.dart';
 
@@ -10,7 +15,7 @@ final _offsetProvider = StateProvider<int>(((ref) => 0));
 
 final _searchTextProvider = StateProvider<String>(((ref) => ''));
 
-final _charactersProvider = FutureProvider<MarvelResponse?>(((ref) {
+final _charactersProvider = FutureProvider<character.MarvelResponse?>(((ref) {
   final characterRepository = ref.read(characterRepositoryProvider);
   final offset = ref.watch(_offsetProvider);
   final searchText = ref.watch(_searchTextProvider);
@@ -28,7 +33,7 @@ class CharactersViewState extends ConsumerState<CharactersView> {
   late ScrollController _scrollController;
   bool isLoading = false;
   String? errorMessage = null;
-  List<Result> allCharacters = [];
+  List<character.Result> allCharacters = [];
   @override
   void initState() {
     super.initState();
@@ -71,8 +76,14 @@ class CharactersViewState extends ConsumerState<CharactersView> {
             flex: 10,
             child: (errorMessage != null)
                 ? ErrorView(message: errorMessage)
-                : InfiniteGridListView(
-                    allCharacters: allCharacters, isLoading: isLoading),
+                : InfiniteGridListView<character.Result>(
+                    allResults: allCharacters,
+                    isLoading: isLoading,
+                    onMaxScrollFunction: () {
+                      ref.read(_offsetProvider.notifier).state += 20;
+                    },
+                    scrollController: _scrollController,
+                  ),
           ),
         ],
       ),
@@ -80,23 +91,26 @@ class CharactersViewState extends ConsumerState<CharactersView> {
   }
 }
 
-class InfiniteGridListView extends ConsumerStatefulWidget {
+class InfiniteGridListView<T> extends ConsumerStatefulWidget {
   const InfiniteGridListView(
-      {super.key, required this.allCharacters, required this.isLoading});
-  final List<Result> allCharacters;
+      {required this.scrollController,
+      required this.onMaxScrollFunction,
+      super.key,
+      required this.allResults,
+      required this.isLoading});
+  final List<T> allResults;
   final bool isLoading;
+  final Function onMaxScrollFunction;
+  final ScrollController scrollController;
 
   @override
   InfiniteGridListViewState createState() => InfiniteGridListViewState();
 }
 
 class InfiniteGridListViewState extends ConsumerState<InfiniteGridListView> {
-  late ScrollController _scrollController;
-
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
   }
 
   @override
@@ -109,26 +123,59 @@ class InfiniteGridListViewState extends ConsumerState<InfiniteGridListView> {
     return Stack(
       children: [
         InfiniteScrollView(
-          scrollController: _scrollController,
+          scrollController: widget.scrollController,
           onMaxScroll: () {
-            ref.read(_offsetProvider.notifier).state += 20;
+            widget.onMaxScrollFunction();
           },
           child: GridView.builder(
             padding: const EdgeInsets.only(bottom: 100),
-            controller: _scrollController,
+            controller: widget.scrollController,
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 300,
                 childAspectRatio: 2 / 3,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5),
             itemBuilder: ((context, index) {
-              return MarvelCardView(
-                title: widget.allCharacters[index].name!,
-                image:
-                    '${widget.allCharacters[index].thumbnail?.path}.${widget.allCharacters[index].thumbnail?.extension}',
-              );
+              final result = widget.allResults[index];
+              if (result is character.Result) {
+                final int? id = result.id;
+                final String title = result.name!;
+                final String image =
+                    '${result.thumbnail?.path}.${result.thumbnail?.extension}';
+                final String? comicsCollectionUri =
+                    result.comics?.collectionUri;
+                final String? seriesCollectionUri =
+                    result.series!.collectionUri;
+                final String? eventsCollectionUri =
+                    result.events!.collectionUri;
+                return MarvelCardView(
+                    title: title,
+                    image: image,
+                    onTap: () {
+                      _onTapGoToChracterDetails(id, comicsCollectionUri,
+                          seriesCollectionUri, eventsCollectionUri);
+                    });
+              } else {
+                final int? id = result.id;
+                final String title = result.title;
+                final String image =
+                    '${result.thumbnail?.path}.${result.thumbnail?.extension}';
+                final String? charactersCollectionUri =
+                    result.characters?.collectionUri;
+                final String? creatorsCollectionUri =
+                    result.creators!.collectionUri;
+                final String? eventsCollectionUri =
+                    result.events!.collectionUri;
+                return MarvelCardView(
+                    title: title,
+                    image: image,
+                    onTap: () {
+                      _onTapGoToChracterDetails(id, charactersCollectionUri,
+                          creatorsCollectionUri, eventsCollectionUri);
+                    });
+              }
             }),
-            itemCount: widget.allCharacters?.length,
+            itemCount: widget.allResults?.length,
           ),
         ),
         if (widget.isLoading)
@@ -146,56 +193,70 @@ class InfiniteGridListViewState extends ConsumerState<InfiniteGridListView> {
       ],
     );
   }
+
+  _onTapGoToChracterDetails(int? id, String? firtsCollection,
+      String? secondeCollection, String? thirdCollection) {
+    GoRouter.of(context)
+        .goNamed(MarvelVisualizerRoutes.characterDetailsRoute.name, params: {
+      'id': '$id',
+      'comicsCollectionUri': firtsCollection ?? '',
+      'seriesCollectionUri': secondeCollection ?? '',
+      'eventsCollectionUri': thirdCollection ?? ''
+    });
+  }
 }
 
 class MarvelCardView extends StatelessWidget {
-  const MarvelCardView({Key? key, required this.title, required this.image})
+  const MarvelCardView(
+      {Key? key, required this.title, required this.image, required this.onTap})
       : super(key: key);
-
   final String title;
   final String image;
+  final Function onTap;
 
   @override
   Widget build(BuildContext context) {
     const unkownImage =
         'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg';
-    return Card(
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      color: const Color.fromARGB(209, 255, 255, 255),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-              flex: 6,
-              child: (image != unkownImage)
-                  ? Image.network(
-                      image,
-                      fit: BoxFit.cover,
-                    )
-                  : Image.network(
-                      image,
-                      fit: BoxFit.none,
-                    )),
-          Expanded(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
+    return GestureDetector(
+      onTap: () {
+        onTap();
+      },
+      child: Card(
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            (image != unkownImage)
+                ? Image.network(
+                    image,
+                    fit: BoxFit.cover,
+                  )
+                : Image.network(
+                    image,
+                    fit: BoxFit.none,
+                  ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                //clipBehavior: Clip.none,
+                color: Colors.black38,
+                width: double.infinity,
+                padding: const EdgeInsets.all(16.0),
                 child: Text(
                   title ?? 'Unkown',
                   style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
-                      color: Colors.red),
+                      color: Colors.white),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-              )
-            ],
-          ))
-        ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

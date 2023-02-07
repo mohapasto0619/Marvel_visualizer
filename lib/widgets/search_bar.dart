@@ -35,7 +35,7 @@ class _SearchBarState extends State<SearchBar> {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: TextField(
-        style: const TextStyle(color: Colors.redAccent),
+        style: const TextStyle(color: Colors.red),
         controller: textEditingController,
         decoration: const InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -46,15 +46,15 @@ class _SearchBarState extends State<SearchBar> {
               borderSide: BorderSide(color: Colors.red),
               borderRadius: BorderRadius.all(Radius.circular(12))),
           border: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.redAccent),
+              borderSide: BorderSide(color: Colors.red),
               borderRadius: BorderRadius.all(Radius.circular(12))),
           filled: true,
           fillColor: Color.fromARGB(209, 255, 255, 255),
           labelText: 'Search...',
-          labelStyle: TextStyle(color: Colors.redAccent),
+          labelStyle: TextStyle(color: Colors.red),
           suffixIcon: Icon(
             Icons.search,
-            color: Colors.redAccent,
+            color: Colors.red,
           ),
         ),
       ),

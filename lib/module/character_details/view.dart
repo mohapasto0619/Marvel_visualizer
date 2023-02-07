@@ -67,12 +67,12 @@ class CharacterDetailsView extends ConsumerWidget {
       final description = character?.description;
       return CustomScrollView(
         slivers: [
-          CharacterDetailsViewHeader(title: title!, image: image),
-          CharacterDetailsViewBody(
+          DetailsViewHeader(title: title!, image: image),
+          DetailsViewBody(
             description: description!,
-            comicsCollectionUri: comicsCollectionUri,
-            seriesCollectionUri: seriesCollectionUri,
-            eventsCollectionUri: eventsCollectionUri,
+            firstCollectionUri: comicsCollectionUri,
+            secondCollectionUri: seriesCollectionUri,
+            thirdCollectionUri: eventsCollectionUri,
           ),
           CharacterDetailsViewFooter(urls: character!.urls!)
         ],
@@ -88,8 +88,8 @@ class CharacterDetailsView extends ConsumerWidget {
   }
 }
 
-class CharacterDetailsViewHeader extends StatelessWidget {
-  const CharacterDetailsViewHeader(
+class DetailsViewHeader extends StatelessWidget {
+  const DetailsViewHeader(
       {super.key, required this.title, required this.image});
 
   final String title;
@@ -101,7 +101,10 @@ class CharacterDetailsViewHeader extends StatelessWidget {
       pinned: false,
       expandedHeight: 250,
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(title),
+        title: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(title),
+        ),
         background: Image.network(
           image,
           fit: BoxFit.cover,
@@ -113,17 +116,17 @@ class CharacterDetailsViewHeader extends StatelessWidget {
   }
 }
 
-class CharacterDetailsViewBody extends StatelessWidget {
-  const CharacterDetailsViewBody(
+class DetailsViewBody extends StatelessWidget {
+  const DetailsViewBody(
       {super.key,
       required this.description,
-      required this.comicsCollectionUri,
-      required this.seriesCollectionUri,
-      required this.eventsCollectionUri});
+      required this.firstCollectionUri,
+      required this.secondCollectionUri,
+      required this.thirdCollectionUri});
 
-  final String comicsCollectionUri;
-  final String seriesCollectionUri;
-  final String eventsCollectionUri;
+  final String firstCollectionUri;
+  final String secondCollectionUri;
+  final String thirdCollectionUri;
   final String description;
 
   @override
@@ -135,9 +138,12 @@ class CharacterDetailsViewBody extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DescriptionView(description: description),
-            ComicsView(collectionUri: comicsCollectionUri),
-            SeriesView(collectionUri: seriesCollectionUri),
-            EventView(collectionUri: eventsCollectionUri)
+            SectionListView<List<comic.Result>>(
+                collectionUri: firstCollectionUri,
+                sectionName: 'Comics',
+                provider: _comicsProvider),
+            SeriesListView(collectionUri: secondCollectionUri),
+            EventListView(collectionUri: thirdCollectionUri)
           ],
         ),
       ),
@@ -165,9 +171,7 @@ class DescriptionView extends StatelessWidget {
             const Text(
               'Description ',
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.redAccent),
+                  fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
             ),
             const SizedBox(
               height: 10,
@@ -186,10 +190,16 @@ class DescriptionView extends StatelessWidget {
   }
 }
 
-class ComicsView extends ConsumerWidget {
-  const ComicsView({super.key, required this.collectionUri});
+class SectionListView<T extends List> extends ConsumerWidget {
+  const SectionListView(
+      {required this.provider,
+      required this.sectionName,
+      super.key,
+      required this.collectionUri});
 
   final String collectionUri;
+  final String sectionName;
+  final FutureProviderFamily<dynamic, String> provider;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -197,24 +207,31 @@ class ComicsView extends ConsumerWidget {
     return comicResponse.when(data: ((data) {
       final comics = data?.data?.results;
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Comics',
-              style: TextStyle(
-                  fontSize: 19,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(209, 255, 255, 255)),
-            ),
+      return Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        color: const Color.fromARGB(209, 255, 255, 255),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  sectionName,
+                  style: const TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red),
+                ),
+              ),
+              SectionInfiniteListView<T>(
+                collectionUri: collectionUri,
+                results: comics as T,
+              )
+            ],
           ),
-          ComicsInfiniteListView(
-            collectionUri: collectionUri,
-            results: comics!,
-          )
-        ],
+        ),
       );
     }), error: ((error, stackTrace) {
       return const ErrorView(message: 'An error occured can\'t load comics.');
@@ -226,27 +243,28 @@ class ComicsView extends ConsumerWidget {
   }
 }
 
-class ComicsInfiniteListView extends ConsumerWidget {
-  const ComicsInfiniteListView(
+class SectionInfiniteListView<T extends List> extends ConsumerWidget {
+  const SectionInfiniteListView(
       {required this.results, required this.collectionUri, super.key});
 
   final String collectionUri;
-  final List<comic.Result> results;
+  final T results;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
-      height: 330,
+      height: 250,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.only(right: 100),
         itemBuilder: ((context, index) {
           return AspectRatio(
-            aspectRatio: 1.7 / 3,
+            aspectRatio: 2 / 3,
             child: MarvelCardView(
               title: results[index].title!,
               image:
                   '${results[index].thumbnail?.path}.${results[index].thumbnail?.extension}',
+              onTap: () {},
             ),
           );
         }),
@@ -256,8 +274,8 @@ class ComicsInfiniteListView extends ConsumerWidget {
   }
 }
 
-class SeriesView extends ConsumerWidget {
-  const SeriesView({super.key, required this.collectionUri});
+class SeriesListView extends ConsumerWidget {
+  const SeriesListView({super.key, required this.collectionUri});
 
   final String collectionUri;
 
@@ -267,24 +285,31 @@ class SeriesView extends ConsumerWidget {
     return seriesResponse.when(data: ((data) {
       final series = data?.data?.results;
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Series',
-              style: TextStyle(
-                  fontSize: 19,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(209, 255, 255, 255)),
-            ),
+      return Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        color: const Color.fromARGB(209, 255, 255, 255),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Series',
+                  style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red),
+                ),
+              ),
+              SeriesInfiniteListView(
+                collectionUri: collectionUri,
+                results: series!,
+              )
+            ],
           ),
-          SeriesInfiniteListView(
-            collectionUri: collectionUri,
-            results: series!,
-          )
-        ],
+        ),
       );
     }), error: ((error, stackTrace) {
       return const ErrorView(message: 'An error occured can\'t load comics.');
@@ -306,17 +331,18 @@ class SeriesInfiniteListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
-      height: 330,
+      height: 250,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.only(right: 100),
         itemBuilder: ((context, index) {
           return AspectRatio(
-            aspectRatio: 1.7 / 3,
+            aspectRatio: 2 / 3,
             child: MarvelCardView(
               title: results[index].title!,
               image:
                   '${results[index].thumbnail?.path}.${results[index].thumbnail?.extension}',
+              onTap: () {},
             ),
           );
         }),
@@ -326,8 +352,8 @@ class SeriesInfiniteListView extends ConsumerWidget {
   }
 }
 
-class EventView extends ConsumerWidget {
-  const EventView({super.key, required this.collectionUri});
+class EventListView extends ConsumerWidget {
+  const EventListView({super.key, required this.collectionUri});
 
   final String collectionUri;
 
@@ -337,24 +363,31 @@ class EventView extends ConsumerWidget {
     return eventResponse.when(data: ((data) {
       final events = data?.data?.results;
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Events',
-              style: TextStyle(
-                  fontSize: 19,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(209, 255, 255, 255)),
-            ),
+      return Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        color: const Color.fromARGB(209, 255, 255, 255),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Events',
+                  style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red),
+                ),
+              ),
+              EventsInfiniteListView(
+                collectionUri: collectionUri,
+                results: events!,
+              )
+            ],
           ),
-          EventsInfiniteListView(
-            collectionUri: collectionUri,
-            results: events!,
-          )
-        ],
+        ),
       );
     }), error: ((error, stackTrace) {
       return const ErrorView(message: 'An error occured can\'t load comics.');
@@ -376,17 +409,18 @@ class EventsInfiniteListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
-      height: 330,
+      height: 250,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.only(right: 100),
         itemBuilder: ((context, index) {
           return AspectRatio(
-            aspectRatio: 1.7 / 3,
+            aspectRatio: 2 / 3,
             child: MarvelCardView(
               title: results[index].title!,
               image:
                   '${results[index].thumbnail?.path}.${results[index].thumbnail?.extension}',
+              onTap: () {},
             ),
           );
         }),
@@ -405,29 +439,33 @@ class CharacterDetailsViewFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverFillRemaining(
       hasScrollBody: false,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Links',
-                style: TextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(209, 255, 255, 255)),
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        color: const Color.fromARGB(209, 255, 255, 255),
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Links',
+                  style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red),
+                ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                for (var url in urls)
-                  FooterElementView(title: url.type!, url: url.url!)
-              ],
-            ),
-          ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  for (var url in urls)
+                    FooterElementView(title: url.type!, url: url.url!)
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -443,12 +481,12 @@ class FooterElementView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      color: const Color.fromARGB(209, 255, 255, 255),
+      color: Colors.red,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
           children: [
-            const Icon(Icons.info, color: Colors.redAccent),
+            const Icon(Icons.info, color: Color.fromARGB(228, 255, 255, 255)),
             const SizedBox(width: 5),
             InkWell(
               onTap: () {
@@ -459,7 +497,7 @@ class FooterElementView extends StatelessWidget {
                 style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w500,
-                    color: Colors.redAccent),
+                    color: Color.fromARGB(219, 255, 255, 255)),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

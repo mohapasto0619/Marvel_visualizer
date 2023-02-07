@@ -8,7 +8,7 @@ part of 'comic.dart';
 
 _$_Comics _$$_ComicsFromJson(Map<String, dynamic> json) => _$_Comics(
       available: json['available'] as int?,
-      collectionUri: json['collectionUri'] as String?,
+      collectionUri: json['collectionURI'] as String?,
       items: (json['items'] as List<dynamic>?)
           ?.map((e) =>
               e == null ? null : ComicsItem.fromJson(e as Map<String, dynamic>))
@@ -18,7 +18,7 @@ _$_Comics _$$_ComicsFromJson(Map<String, dynamic> json) => _$_Comics(
 
 Map<String, dynamic> _$$_ComicsToJson(_$_Comics instance) => <String, dynamic>{
       'available': instance.available,
-      'collectionUri': instance.collectionUri,
+      'collectionURI': instance.collectionUri,
       'items': instance.items,
       'returned': instance.returned,
     };

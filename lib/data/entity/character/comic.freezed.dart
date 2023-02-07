@@ -21,6 +21,7 @@ Comics _$ComicsFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Comics {
   int? get available => throw _privateConstructorUsedError;
+  @JsonKey(name: 'collectionURI')
   String? get collectionUri => throw _privateConstructorUsedError;
   List<ComicsItem?>? get items => throw _privateConstructorUsedError;
   int? get returned => throw _privateConstructorUsedError;
@@ -37,7 +38,7 @@ abstract class $ComicsCopyWith<$Res> {
   @useResult
   $Res call(
       {int? available,
-      String? collectionUri,
+      @JsonKey(name: 'collectionURI') String? collectionUri,
       List<ComicsItem?>? items,
       int? returned});
 }
@@ -89,7 +90,7 @@ abstract class _$$_ComicsCopyWith<$Res> implements $ComicsCopyWith<$Res> {
   @useResult
   $Res call(
       {int? available,
-      String? collectionUri,
+      @JsonKey(name: 'collectionURI') String? collectionUri,
       List<ComicsItem?>? items,
       int? returned});
 }
@@ -135,7 +136,7 @@ class __$$_ComicsCopyWithImpl<$Res>
 class _$_Comics implements _Comics {
   const _$_Comics(
       {this.available,
-      this.collectionUri,
+      @JsonKey(name: 'collectionURI') this.collectionUri,
       final List<ComicsItem?>? items,
       this.returned})
       : _items = items;
@@ -146,6 +147,7 @@ class _$_Comics implements _Comics {
   @override
   final int? available;
   @override
+  @JsonKey(name: 'collectionURI')
   final String? collectionUri;
   final List<ComicsItem?>? _items;
   @override
@@ -201,7 +203,7 @@ class _$_Comics implements _Comics {
 abstract class _Comics implements Comics {
   const factory _Comics(
       {final int? available,
-      final String? collectionUri,
+      @JsonKey(name: 'collectionURI') final String? collectionUri,
       final List<ComicsItem?>? items,
       final int? returned}) = _$_Comics;
 
@@ -210,6 +212,7 @@ abstract class _Comics implements Comics {
   @override
   int? get available;
   @override
+  @JsonKey(name: 'collectionURI')
   String? get collectionUri;
   @override
   List<ComicsItem?>? get items;

@@ -10,6 +10,13 @@ class ComicRepository {
 
   final ApiClient _apiClient;
 
+  Future<comic.MarvelResponse?> getComics(
+          {String query = '', int offset = 0}) =>
+      _apiClient.getComics(query: query, offset: offset);
+
+  Future<comic.MarvelResponse?> getComic({required int id}) =>
+      _apiClient.getComic(id: id);
+
   Future<comic.MarvelResponse?> getComicsCollectionForCharacter(
           {required String collectionUri}) =>
       _apiClient.getComicsCollectionForCharacter(collectionUri: collectionUri);

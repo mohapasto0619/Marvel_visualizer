@@ -32,7 +32,7 @@ class Data with _$Data {
     int? limit,
     int? total,
     int? count,
-    List<Result>? results,
+    required List<Result> results,
   }) = _Data;
 
   factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);

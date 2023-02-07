@@ -305,7 +305,7 @@ mixin _$Data {
   int? get limit => throw _privateConstructorUsedError;
   int? get total => throw _privateConstructorUsedError;
   int? get count => throw _privateConstructorUsedError;
-  List<Result>? get results => throw _privateConstructorUsedError;
+  List<Result> get results => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -318,7 +318,7 @@ abstract class $DataCopyWith<$Res> {
       _$DataCopyWithImpl<$Res, Data>;
   @useResult
   $Res call(
-      {int? offset, int? limit, int? total, int? count, List<Result>? results});
+      {int? offset, int? limit, int? total, int? count, List<Result> results});
 }
 
 /// @nodoc
@@ -338,7 +338,7 @@ class _$DataCopyWithImpl<$Res, $Val extends Data>
     Object? limit = freezed,
     Object? total = freezed,
     Object? count = freezed,
-    Object? results = freezed,
+    Object? results = null,
   }) {
     return _then(_value.copyWith(
       offset: freezed == offset
@@ -357,10 +357,10 @@ class _$DataCopyWithImpl<$Res, $Val extends Data>
           ? _value.count
           : count // ignore: cast_nullable_to_non_nullable
               as int?,
-      results: freezed == results
+      results: null == results
           ? _value.results
           : results // ignore: cast_nullable_to_non_nullable
-              as List<Result>?,
+              as List<Result>,
     ) as $Val);
   }
 }
@@ -372,7 +372,7 @@ abstract class _$$_DataCopyWith<$Res> implements $DataCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {int? offset, int? limit, int? total, int? count, List<Result>? results});
+      {int? offset, int? limit, int? total, int? count, List<Result> results});
 }
 
 /// @nodoc
@@ -388,7 +388,7 @@ class __$$_DataCopyWithImpl<$Res> extends _$DataCopyWithImpl<$Res, _$_Data>
     Object? limit = freezed,
     Object? total = freezed,
     Object? count = freezed,
-    Object? results = freezed,
+    Object? results = null,
   }) {
     return _then(_$_Data(
       offset: freezed == offset
@@ -407,10 +407,10 @@ class __$$_DataCopyWithImpl<$Res> extends _$DataCopyWithImpl<$Res, _$_Data>
           ? _value.count
           : count // ignore: cast_nullable_to_non_nullable
               as int?,
-      results: freezed == results
+      results: null == results
           ? _value._results
           : results // ignore: cast_nullable_to_non_nullable
-              as List<Result>?,
+              as List<Result>,
     ));
   }
 }
@@ -423,7 +423,7 @@ class _$_Data implements _Data {
       this.limit,
       this.total,
       this.count,
-      final List<Result>? results})
+      required final List<Result> results})
       : _results = results;
 
   factory _$_Data.fromJson(Map<String, dynamic> json) => _$$_DataFromJson(json);
@@ -436,14 +436,12 @@ class _$_Data implements _Data {
   final int? total;
   @override
   final int? count;
-  final List<Result>? _results;
+  final List<Result> _results;
   @override
-  List<Result>? get results {
-    final value = _results;
-    if (value == null) return null;
+  List<Result> get results {
     if (_results is EqualUnmodifiableListView) return _results;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
+    return EqualUnmodifiableListView(_results);
   }
 
   @override
@@ -488,7 +486,7 @@ abstract class _Data implements Data {
       final int? limit,
       final int? total,
       final int? count,
-      final List<Result>? results}) = _$_Data;
+      required final List<Result> results}) = _$_Data;
 
   factory _Data.fromJson(Map<String, dynamic> json) = _$_Data.fromJson;
 
@@ -501,7 +499,7 @@ abstract class _Data implements Data {
   @override
   int? get count;
   @override
-  List<Result>? get results;
+  List<Result> get results;
   @override
   @JsonKey(ignore: true)
   _$$_DataCopyWith<_$_Data> get copyWith => throw _privateConstructorUsedError;

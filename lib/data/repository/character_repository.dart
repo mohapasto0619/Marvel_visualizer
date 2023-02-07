@@ -12,4 +12,8 @@ class CharacterRepository {
 
   Future<MarvelResponse?> getCharacter({required int id}) =>
       _apiClient.getCharacter(id: id);
+
+  Future<MarvelResponse?> getCharactersCollectionForComic(
+          {required String collectionUri}) =>
+      _apiClient.getcharactersCollectionForComic(collectionUri: collectionUri);
 }

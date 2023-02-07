@@ -35,8 +35,8 @@ _$_Data _$$_DataFromJson(Map<String, dynamic> json) => _$_Data(
       limit: json['limit'] as int?,
       total: json['total'] as int?,
       count: json['count'] as int?,
-      results: (json['results'] as List<dynamic>?)
-          ?.map((e) => Result.fromJson(e as Map<String, dynamic>))
+      results: (json['results'] as List<dynamic>)
+          .map((e) => Result.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
