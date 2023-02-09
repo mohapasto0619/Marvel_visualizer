@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:marvel_visualiser/module/home/bottom_bar_index_notifier.dart';
 import 'package:marvel_visualiser/router/app_router_names.dart';
-
-class BottomBarIndexNotifier extends StateNotifier<int> {
-  BottomBarIndexNotifier(super.state);
-
-  void setPosition(int value) {
-    state = value;
-  }
-}
 
 final bottomBarIndexNotifierProvider =
     StateNotifierProvider<BottomBarIndexNotifier, int>((ref) {

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:marvel_visualiser/data/entity/comic/marvel_response.dart';
-import 'package:marvel_visualiser/module/app/app.dart';
-import 'package:marvel_visualiser/module/characters/view.dart';
+import 'package:marvel_visualiser/data/repository/comic_repository.dart';
+import 'package:marvel_visualiser/router/app_router_names.dart';
+import 'package:marvel_visualiser/widgets/error_view.dart';
+import 'package:marvel_visualiser/widgets/infinite_grid_list_view.dart';
 import 'package:marvel_visualiser/widgets/search_bar.dart';
 
 final _offsetProvider = StateProvider<int>(((ref) => 0));
@@ -28,6 +31,7 @@ class ComicsViewState extends ConsumerState<ComicsView> {
   bool isLoading = false;
   String? errorMessage = null;
   List<Result> allComics = [];
+  List<Result> lastComicsFetch = [];
 
   @override
   void initState() {
@@ -45,8 +49,12 @@ class ComicsViewState extends ConsumerState<ComicsView> {
     final comicsResponse = ref.watch(_comicsProvider);
     comicsResponse.when(
         data: (comics) {
+          final newComics = comics!.data!.results;
           errorMessage = null;
-          allComics.addAll(comics!.data!.results);
+          if (lastComicsFetch != newComics) {
+            lastComicsFetch = newComics;
+            allComics.addAll(newComics);
+          }
           isLoading = false;
         },
         loading: () {
@@ -71,17 +79,32 @@ class ComicsViewState extends ConsumerState<ComicsView> {
             flex: 10,
             child: (errorMessage != null)
                 ? ErrorView(message: errorMessage)
-                : InfiniteGridListView<Result>(
-                    allResults: allComics,
-                    isLoading: isLoading,
-                    onMaxScrollFunction: () {
-                      ref.read(_offsetProvider.notifier).state += 20;
-                    },
-                    scrollController: _scrollController,
+                : Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: InfiniteGridListView<Result>(
+                      allResults: allComics,
+                      isLoading: isLoading,
+                      onMaxScrollFunction: () {
+                        ref.read(_offsetProvider.notifier).state += 20;
+                      },
+                      onTap: _onTapGoToComicDetails,
+                      scrollController: _scrollController,
+                    ),
                   ),
           ),
         ],
       ),
     );
+  }
+
+  _onTapGoToComicDetails(int? id, String? firtsCollection,
+      String? secondeCollection, String? thirdCollection) {
+    GoRouter.of(context)
+        .goNamed(MarvelVisualizerRoutes.comicDetailsRoute.name, params: {
+      'id': '$id',
+      'charactersCollectionUri': firtsCollection ?? '',
+      'creatorsCollectionUri': secondeCollection ?? '',
+      'eventsCollectionUri': thirdCollection ?? ''
+    });
   }
 }

@@ -79,7 +79,7 @@ class Result with _$Result {
 class Characters with _$Characters {
   const factory Characters({
     int? available,
-    String? collectionUri,
+    @JsonKey(name: 'collectionURI') String? collectionUri,
     List<Series>? items,
     int? returned,
   }) = _Characters;
@@ -102,7 +102,7 @@ class Series with _$Series {
 class Creators with _$Creators {
   const factory Creators({
     int? available,
-    String? collectionUri,
+    @JsonKey(name: 'collectionURI') String? collectionUri,
     List<CreatorsItem>? items,
     int? returned,
   }) = _Creators;

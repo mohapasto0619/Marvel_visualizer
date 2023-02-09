@@ -6,11 +6,18 @@ import 'package:marvel_visualiser/data/entity/event/marvel_response.dart'
     as event;
 import 'package:marvel_visualiser/data/entity/character/marvel_response.dart'
     as character;
+import 'package:marvel_visualiser/data/entity/character/result.dart'
+    as character;
 import 'package:marvel_visualiser/data/entity/creator/marvel_response.dart'
     as creator;
-import 'package:marvel_visualiser/module/app/app.dart';
+import 'package:marvel_visualiser/data/repository/character_repository.dart';
+import 'package:marvel_visualiser/data/repository/comic_repository.dart';
+import 'package:marvel_visualiser/data/repository/creator_repository.dart';
+import 'package:marvel_visualiser/data/repository/event_repository.dart';
 import 'package:marvel_visualiser/module/character_details/view.dart';
-import 'package:marvel_visualiser/module/characters/view.dart';
+import 'package:marvel_visualiser/widgets/description_view.dart';
+import 'package:marvel_visualiser/widgets/error_view.dart';
+import 'package:marvel_visualiser/widgets/section_list_view.dart';
 
 final _comicProvider =
     FutureProvider.family<comic.MarvelResponse?, int>(((ref, id) {
@@ -65,7 +72,7 @@ class ComicDetailsView extends ConsumerWidget {
       return CustomScrollView(
         slivers: [
           DetailsViewHeader(title: title!, image: image),
-          DetailsViewBody(
+          ComicDetailsViewBody(
             description: description!,
             firstCollectionUri: comicsCollectionUri,
             secondCollectionUri: seriesCollectionUri,
@@ -82,5 +89,46 @@ class ComicDetailsView extends ConsumerWidget {
         child: CircularProgressIndicator(),
       );
     }));
+  }
+}
+
+class ComicDetailsViewBody extends StatelessWidget {
+  const ComicDetailsViewBody(
+      {super.key,
+      required this.description,
+      required this.firstCollectionUri,
+      required this.secondCollectionUri,
+      required this.thirdCollectionUri});
+
+  final String firstCollectionUri;
+  final String secondCollectionUri;
+  final String thirdCollectionUri;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.all(2),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DescriptionView(description: description),
+            SectionListView<List<character.Result>>(
+                collectionUri: firstCollectionUri,
+                sectionName: 'Characters',
+                provider: _charactersrovider),
+            SectionListView<List<creator.Result>>(
+                collectionUri: secondCollectionUri,
+                sectionName: 'Creators',
+                provider: _creatorsProvider),
+            SectionListView<List<event.Result>>(
+                collectionUri: thirdCollectionUri,
+                sectionName: 'Events',
+                provider: _eventsProvider)
+          ],
+        ),
+      ),
+    );
   }
 }

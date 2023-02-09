@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:marvel_visualiser/module/character_details/view.dart';
 import 'package:marvel_visualiser/module/characters/view.dart';
+import 'package:marvel_visualiser/module/comic_details/view.dart';
 import 'package:marvel_visualiser/module/comics/view.dart';
 import 'package:marvel_visualiser/module/home/view.dart';
 import 'package:marvel_visualiser/module/settings/view.dart';
 import 'package:marvel_visualiser/router/app_router_names.dart';
+
+final appRouterProvider = Provider((ref) {
+  final router = AppRouter();
+  return router.appRouter;
+});
 
 class AppRouter {
   AppRouter() {
@@ -45,12 +52,22 @@ class AppRouter {
   List<GoRoute> setUpShellRouteSubRoutes() => [
         GoRoute(
             name: MarvelVisualizerRoutes.charactersRoute.name,
-            builder: (context, state) => const CharactersView(),
+            pageBuilder: (context, state) => CustomTransitionPage(
+                  child: const CharactersView(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(
+                      opacity: CurveTween(curve: Curves.easeInOutCirc)
+                          .animate(animation),
+                      child: child,
+                    );
+                  },
+                ),
             path: MarvelVisualizerRoutes.charactersRoute.path,
             routes: [
               GoRoute(
                 name: MarvelVisualizerRoutes.characterDetailsRoute.name,
-                builder: (context, state) {
+                pageBuilder: (context, state) {
                   final id = int.parse(state.params['id'].toString());
                   final comicsCollectionUri =
                       state.params['comicsCollectionUri'].toString();
@@ -58,11 +75,21 @@ class AppRouter {
                       state.params['seriesCollectionUri'].toString();
                   final eventsCollectionUri =
                       state.params['eventsCollectionUri'].toString();
-                  return CharacterDetailsView(
-                    id: id,
-                    comicsCollectionUri: comicsCollectionUri,
-                    seriesCollectionUri: seriesCollectionUri,
-                    eventsCollectionUri: eventsCollectionUri,
+                  return CustomTransitionPage(
+                    child: CharacterDetailsView(
+                      id: id,
+                      comicsCollectionUri: comicsCollectionUri,
+                      seriesCollectionUri: seriesCollectionUri,
+                      eventsCollectionUri: eventsCollectionUri,
+                    ),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(
+                        opacity: CurveTween(curve: Curves.easeInOutCirc)
+                            .animate(animation),
+                        child: child,
+                      );
+                    },
                   );
                 },
                 path: MarvelVisualizerRoutes.characterDetailsRoute.path,
@@ -70,8 +97,49 @@ class AppRouter {
             ]),
         GoRoute(
             name: MarvelVisualizerRoutes.comicsRoute.name,
-            builder: (context, state) => const ComicsView(),
-            path: MarvelVisualizerRoutes.comicsRoute.path),
+            pageBuilder: (context, state) => CustomTransitionPage(
+                  child: const ComicsView(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(
+                      opacity: CurveTween(curve: Curves.easeInOutCirc)
+                          .animate(animation),
+                      child: child,
+                    );
+                  },
+                ),
+            path: MarvelVisualizerRoutes.comicsRoute.path,
+            routes: [
+              GoRoute(
+                name: MarvelVisualizerRoutes.comicDetailsRoute.name,
+                pageBuilder: (context, state) {
+                  final id = int.parse(state.params['id'].toString());
+                  final charactersCollectionUri =
+                      state.params['charactersCollectionUri'].toString();
+                  final creatorsCollectionUri =
+                      state.params['creatorsCollectionUri'].toString();
+                  final eventsCollectionUri =
+                      state.params['eventsCollectionUri'].toString();
+                  return CustomTransitionPage(
+                    child: ComicDetailsView(
+                      id: id,
+                      comicsCollectionUri: charactersCollectionUri,
+                      seriesCollectionUri: creatorsCollectionUri,
+                      eventsCollectionUri: eventsCollectionUri,
+                    ),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(
+                        opacity: CurveTween(curve: Curves.easeInOutCirc)
+                            .animate(animation),
+                        child: child,
+                      );
+                    },
+                  );
+                },
+                path: MarvelVisualizerRoutes.comicDetailsRoute.path,
+              ),
+            ]),
         GoRoute(
           name: MarvelVisualizerRoutes.settingsRoute.name,
           builder: (context, state) => const SettingsView(),

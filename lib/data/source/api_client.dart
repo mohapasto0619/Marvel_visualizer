@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
 import 'package:marvel_visualiser/data/entity/character/marvel_response.dart'
@@ -15,6 +16,8 @@ import 'package:marvel_visualiser/data/entity/creator/marvel_response.dart'
 const baseUrl = 'https://gateway.marvel.com/v1/';
 const publicApiKey = '20e4d27ec981dc6fc91249da6265a01b';
 const privateApiKey = '047279423bf2733fb668332406baadfed4776a15';
+
+final apiClientProvider = Provider(((ref) => ApiClient()));
 
 class ApiClient {
   Future<character.MarvelResponse?> getCharacters(

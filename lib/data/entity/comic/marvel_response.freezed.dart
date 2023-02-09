@@ -1347,6 +1347,7 @@ Characters _$CharactersFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Characters {
   int? get available => throw _privateConstructorUsedError;
+  @JsonKey(name: 'collectionURI')
   String? get collectionUri => throw _privateConstructorUsedError;
   List<Series>? get items => throw _privateConstructorUsedError;
   int? get returned => throw _privateConstructorUsedError;
@@ -1365,7 +1366,7 @@ abstract class $CharactersCopyWith<$Res> {
   @useResult
   $Res call(
       {int? available,
-      String? collectionUri,
+      @JsonKey(name: 'collectionURI') String? collectionUri,
       List<Series>? items,
       int? returned});
 }
@@ -1419,7 +1420,7 @@ abstract class _$$_CharactersCopyWith<$Res>
   @useResult
   $Res call(
       {int? available,
-      String? collectionUri,
+      @JsonKey(name: 'collectionURI') String? collectionUri,
       List<Series>? items,
       int? returned});
 }
@@ -1466,7 +1467,7 @@ class __$$_CharactersCopyWithImpl<$Res>
 class _$_Characters implements _Characters {
   const _$_Characters(
       {this.available,
-      this.collectionUri,
+      @JsonKey(name: 'collectionURI') this.collectionUri,
       final List<Series>? items,
       this.returned})
       : _items = items;
@@ -1477,6 +1478,7 @@ class _$_Characters implements _Characters {
   @override
   final int? available;
   @override
+  @JsonKey(name: 'collectionURI')
   final String? collectionUri;
   final List<Series>? _items;
   @override
@@ -1532,7 +1534,7 @@ class _$_Characters implements _Characters {
 abstract class _Characters implements Characters {
   const factory _Characters(
       {final int? available,
-      final String? collectionUri,
+      @JsonKey(name: 'collectionURI') final String? collectionUri,
       final List<Series>? items,
       final int? returned}) = _$_Characters;
 
@@ -1542,6 +1544,7 @@ abstract class _Characters implements Characters {
   @override
   int? get available;
   @override
+  @JsonKey(name: 'collectionURI')
   String? get collectionUri;
   @override
   List<Series>? get items;
@@ -1708,6 +1711,7 @@ Creators _$CreatorsFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Creators {
   int? get available => throw _privateConstructorUsedError;
+  @JsonKey(name: 'collectionURI')
   String? get collectionUri => throw _privateConstructorUsedError;
   List<CreatorsItem>? get items => throw _privateConstructorUsedError;
   int? get returned => throw _privateConstructorUsedError;
@@ -1725,7 +1729,7 @@ abstract class $CreatorsCopyWith<$Res> {
   @useResult
   $Res call(
       {int? available,
-      String? collectionUri,
+      @JsonKey(name: 'collectionURI') String? collectionUri,
       List<CreatorsItem>? items,
       int? returned});
 }
@@ -1778,7 +1782,7 @@ abstract class _$$_CreatorsCopyWith<$Res> implements $CreatorsCopyWith<$Res> {
   @useResult
   $Res call(
       {int? available,
-      String? collectionUri,
+      @JsonKey(name: 'collectionURI') String? collectionUri,
       List<CreatorsItem>? items,
       int? returned});
 }
@@ -1825,7 +1829,7 @@ class __$$_CreatorsCopyWithImpl<$Res>
 class _$_Creators implements _Creators {
   const _$_Creators(
       {this.available,
-      this.collectionUri,
+      @JsonKey(name: 'collectionURI') this.collectionUri,
       final List<CreatorsItem>? items,
       this.returned})
       : _items = items;
@@ -1836,6 +1840,7 @@ class _$_Creators implements _Creators {
   @override
   final int? available;
   @override
+  @JsonKey(name: 'collectionURI')
   final String? collectionUri;
   final List<CreatorsItem>? _items;
   @override
@@ -1891,7 +1896,7 @@ class _$_Creators implements _Creators {
 abstract class _Creators implements Creators {
   const factory _Creators(
       {final int? available,
-      final String? collectionUri,
+      @JsonKey(name: 'collectionURI') final String? collectionUri,
       final List<CreatorsItem>? items,
       final int? returned}) = _$_Creators;
 
@@ -1900,6 +1905,7 @@ abstract class _Creators implements Creators {
   @override
   int? get available;
   @override
+  @JsonKey(name: 'collectionURI')
   String? get collectionUri;
   @override
   List<CreatorsItem>? get items;

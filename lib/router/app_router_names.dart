@@ -14,5 +14,5 @@ class MarvelVisualizerRoutes {
   static const MarvelRoute comicDetailsRoute = MarvelRoute(
       name: 'comic_details',
       path:
-          'comic/:id/:charactersCollectionUri/:seriesCollectionUri/:eventsCollectionUri');
+          'comic/:id/:charactersCollectionUri/:creatorsCollectionUri/:eventsCollectionUri');
 }

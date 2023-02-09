@@ -131,7 +131,7 @@ Map<String, dynamic> _$$_ResultToJson(_$_Result instance) => <String, dynamic>{
 _$_Characters _$$_CharactersFromJson(Map<String, dynamic> json) =>
     _$_Characters(
       available: json['available'] as int?,
-      collectionUri: json['collectionUri'] as String?,
+      collectionUri: json['collectionURI'] as String?,
       items: (json['items'] as List<dynamic>?)
           ?.map((e) => Series.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -141,7 +141,7 @@ _$_Characters _$$_CharactersFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$_CharactersToJson(_$_Characters instance) =>
     <String, dynamic>{
       'available': instance.available,
-      'collectionUri': instance.collectionUri,
+      'collectionURI': instance.collectionUri,
       'items': instance.items,
       'returned': instance.returned,
     };
@@ -158,7 +158,7 @@ Map<String, dynamic> _$$_SeriesToJson(_$_Series instance) => <String, dynamic>{
 
 _$_Creators _$$_CreatorsFromJson(Map<String, dynamic> json) => _$_Creators(
       available: json['available'] as int?,
-      collectionUri: json['collectionUri'] as String?,
+      collectionUri: json['collectionURI'] as String?,
       items: (json['items'] as List<dynamic>?)
           ?.map((e) => CreatorsItem.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -168,7 +168,7 @@ _$_Creators _$$_CreatorsFromJson(Map<String, dynamic> json) => _$_Creators(
 Map<String, dynamic> _$$_CreatorsToJson(_$_Creators instance) =>
     <String, dynamic>{
       'available': instance.available,
-      'collectionUri': instance.collectionUri,
+      'collectionURI': instance.collectionUri,
       'items': instance.items,
       'returned': instance.returned,
     };
