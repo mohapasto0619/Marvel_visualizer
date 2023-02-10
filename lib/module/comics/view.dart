@@ -7,12 +7,18 @@ import 'package:marvel_visualiser/router/app_router_names.dart';
 import 'package:marvel_visualiser/widgets/error_view.dart';
 import 'package:marvel_visualiser/widgets/infinite_grid_list_view.dart';
 import 'package:marvel_visualiser/widgets/search_bar.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final _offsetProvider = StateProvider<int>(((ref) => 0));
+@riverpod
+String helloWorld(HelloWorldRef ref) {
+  return 'Hello world';
+}
 
-final _searchTextProvider = StateProvider<String>(((ref) => ''));
+final _offsetProvider = StateProvider.autoDispose<int>(((ref) => 0));
 
-final _comicsProvider = FutureProvider<MarvelResponse?>(((ref) {
+final _searchTextProvider = StateProvider.autoDispose<String>(((ref) => ''));
+
+final _comicsProvider = FutureProvider.autoDispose<MarvelResponse?>(((ref) {
   final comicsRepository = ref.read(comicRepositoryProvider);
   final offset = ref.watch(_offsetProvider);
   final searchText = ref.watch(_searchTextProvider);
@@ -68,13 +74,17 @@ class ComicsViewState extends ConsumerState<ComicsView> {
         children: [
           Expanded(
               flex: 1,
-              child: SearchBar(search: (String value) {
-                if (value.isNotEmpty) {
-                  ref.read(_offsetProvider.notifier).state = 0;
-                  ref.read(_searchTextProvider.notifier).state = value;
-                  allComics = [];
-                }
-              })),
+              child: SearchBar(
+                  initialValue: ref.read(_searchTextProvider),
+                  search: (
+                    String value,
+                  ) {
+                    if (value.isNotEmpty) {
+                      ref.read(_offsetProvider.notifier).state = 0;
+                      ref.read(_searchTextProvider.notifier).state = value;
+                      allComics = [];
+                    }
+                  })),
           Expanded(
             flex: 10,
             child: (errorMessage != null)

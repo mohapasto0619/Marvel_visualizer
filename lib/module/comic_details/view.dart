@@ -73,7 +73,7 @@ class ComicDetailsView extends ConsumerWidget {
         slivers: [
           DetailsViewHeader(title: title!, image: image),
           ComicDetailsViewBody(
-            description: description!,
+            description: description ?? '',
             firstCollectionUri: comicsCollectionUri,
             secondCollectionUri: seriesCollectionUri,
             thirdCollectionUri: eventsCollectionUri,
