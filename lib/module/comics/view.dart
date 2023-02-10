@@ -7,12 +7,6 @@ import 'package:marvel_visualiser/router/app_router_names.dart';
 import 'package:marvel_visualiser/widgets/error_view.dart';
 import 'package:marvel_visualiser/widgets/infinite_grid_list_view.dart';
 import 'package:marvel_visualiser/widgets/search_bar.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-@riverpod
-String helloWorld(HelloWorldRef ref) {
-  return 'Hello world';
-}
 
 final _offsetProvider = StateProvider.autoDispose<int>(((ref) => 0));
 

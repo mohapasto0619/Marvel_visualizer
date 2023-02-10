@@ -1,11 +1,14 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:marvel_visualiser/data/entity/character/marvel_response.dart';
 import 'package:marvel_visualiser/data/source/api_client.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final characterRepositoryProvider = Provider(((ref) {
+part 'character_repository.g.dart';
+
+@Riverpod(keepAlive: true)
+CharacterRepository characterRepository(CharacterRepositoryRef ref) {
   final apiClient = ref.read(apiClientProvider);
   return CharacterRepository(apiClient: apiClient);
-}));
+}
 
 class CharacterRepository {
   const CharacterRepository({required ApiClient apiClient})

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:marvel_visualiser/data/entity/character/marvel_response.dart'
     as character;
+import 'package:marvel_visualiser/data/entity/character/marvel_response.dart';
 import 'package:marvel_visualiser/data/entity/character/result.dart'
     as character;
 import 'package:marvel_visualiser/data/repository/character_repository.dart';
@@ -11,22 +12,30 @@ import 'package:marvel_visualiser/router/app_router_names.dart';
 import 'package:marvel_visualiser/widgets/error_view.dart';
 import 'package:marvel_visualiser/widgets/infinite_grid_list_view.dart';
 import 'package:marvel_visualiser/widgets/search_bar.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final _offsetProvider = StateProvider.autoDispose<int>(((ref) => 0));
+part 'view.g.dart';
 
-final _searchTextProvider = StateProvider.autoDispose<String>(((ref) => ''));
+@Riverpod(keepAlive: false)
+class Offset extends _$Offset {
+  @override
+  int build() => 0;
+}
 
-final _charactersFetcherProvider =
-    FutureProvider.autoDispose<character.MarvelResponse?>(((ref) {
+@Riverpod(keepAlive: false)
+class SearchText extends _$SearchText {
+  @override
+  String build() => '';
+}
+
+@Riverpod(keepAlive: false)
+Future<character.MarvelResponse?> _charactersFetcher(
+    _CharactersFetcherRef ref) {
   final characterRepository = ref.read(characterRepositoryProvider);
-  final offset = ref.watch(_offsetProvider);
-  final searchText = ref.watch(_searchTextProvider);
+  final offset = ref.watch(offsetProvider);
+  final searchText = ref.watch(searchTextProvider);
   return characterRepository.getCharacters(query: searchText, offset: offset);
-}));
-
-/*final _allCharactersProvider =
-    StateNotifierProvider<AllCharactersNotifier, List<character.Result>>(
-        (ref) => AllCharactersNotifier([]));*/
+}
 
 class CharactersView extends ConsumerStatefulWidget {
   const CharactersView({super.key});
@@ -83,13 +92,13 @@ class CharactersViewState extends ConsumerState<CharactersView> {
           Expanded(
               flex: 1,
               child: SearchBar(
-                  initialValue: ref.read(_searchTextProvider),
+                  initialValue: ref.read(searchTextProvider),
                   search: (
                     String value,
                   ) {
                     if (value.isNotEmpty) {
-                      ref.read(_offsetProvider.notifier).state = 0;
-                      ref.read(_searchTextProvider.notifier).state = value;
+                      ref.read(offsetProvider.notifier).state = 0;
+                      ref.read(searchTextProvider.notifier).state = value;
                       allCharacters = [];
                     }
                   })),
@@ -103,7 +112,7 @@ class CharactersViewState extends ConsumerState<CharactersView> {
                       allResults: allCharacters,
                       isLoading: isLoading,
                       onMaxScrollFunction: () {
-                        ref.read(_offsetProvider.notifier).state += 20;
+                        ref.read(offsetProvider.notifier).state += 20;
                       },
                       onTap: _onTapGoToChracterDetails,
                       scrollController: _scrollController,
