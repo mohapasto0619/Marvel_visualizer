@@ -18,7 +18,7 @@ final _searchTextProvider = StateProvider.autoDispose<String>(((ref) => ''));
 
 final _charactersFetcherProvider =
     FutureProvider.autoDispose<character.MarvelResponse?>(((ref) {
-  final characterRepository = ref.read(characterRepositoryProvider);
+  final characterRepository = ref.watch(characterRepositoryProvider);
   final offset = ref.watch(_offsetProvider);
   final searchText = ref.watch(_searchTextProvider);
   return characterRepository.getCharacters(query: searchText, offset: offset);
