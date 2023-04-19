@@ -7,7 +7,6 @@ import 'package:marvel_visualiser/data/entity/character/marvel_response.dart';
 import 'package:marvel_visualiser/data/entity/character/result.dart'
     as character;
 import 'package:marvel_visualiser/data/repository/character_repository.dart';
-//import 'package:marvel_visualiser/module/characters/all_characters_notifier.dart';
 import 'package:marvel_visualiser/router/app_router_names.dart';
 import 'package:marvel_visualiser/widgets/error_view.dart';
 import 'package:marvel_visualiser/widgets/infinite_grid_list_view.dart';
@@ -66,16 +65,12 @@ class CharactersViewState extends ConsumerState<CharactersView> {
   Widget build(BuildContext context) {
     print('rebuild');
     final charactersResponse = ref.watch(_charactersFetcherProvider);
-    //final allCharacters = ref.watch(_allCharactersProvider);
     charactersResponse.when(
         data: (characters) {
           final newCharacters = characters!.data!.results;
           errorMessage = null;
           if (lastCharactersFetch != newCharacters) {
             lastCharactersFetch = newCharacters;
-            /*ref
-                .read(_allCharactersProvider.notifier)
-                .addCharacters(newCharacters);*/
             allCharacters.addAll(newCharacters);
           }
           isLoading = false;
