@@ -16,13 +16,14 @@ class CharacterRepository {
 
   final ApiClient _apiClient;
 
-  Future<MarvelResponse?> getCharacters({String query = '', int offset = 0}) =>
+  Future<CharacterMarvelResponse?> getCharacters(
+          {String query = '', int offset = 0}) =>
       _apiClient.getCharacters(query: query, offset: offset);
 
-  Future<MarvelResponse?> getCharacter({required int id}) =>
+  Future<CharacterMarvelResponse?> getCharacter({required int id}) =>
       _apiClient.getCharacter(id: id);
 
-  Future<MarvelResponse?> getCharactersCollectionForComic(
+  Future<CharacterMarvelResponse?> getCharactersCollectionForComic(
           {required String collectionUri}) =>
       _apiClient.getcharactersCollectionForComic(collectionUri: collectionUri);
 }

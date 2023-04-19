@@ -14,12 +14,12 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
-MarvelResponse _$MarvelResponseFromJson(Map<String, dynamic> json) {
+EventMarvelResponse _$EventMarvelResponseFromJson(Map<String, dynamic> json) {
   return _MarvelResponse.fromJson(json);
 }
 
 /// @nodoc
-mixin _$MarvelResponse {
+mixin _$EventMarvelResponse {
   int? get code => throw _privateConstructorUsedError;
   String? get status => throw _privateConstructorUsedError;
   String? get copyright => throw _privateConstructorUsedError;
@@ -30,15 +30,15 @@ mixin _$MarvelResponse {
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $MarvelResponseCopyWith<MarvelResponse> get copyWith =>
+  $EventMarvelResponseCopyWith<EventMarvelResponse> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $MarvelResponseCopyWith<$Res> {
-  factory $MarvelResponseCopyWith(
-          MarvelResponse value, $Res Function(MarvelResponse) then) =
-      _$MarvelResponseCopyWithImpl<$Res, MarvelResponse>;
+abstract class $EventMarvelResponseCopyWith<$Res> {
+  factory $EventMarvelResponseCopyWith(
+          EventMarvelResponse value, $Res Function(EventMarvelResponse) then) =
+      _$EventMarvelResponseCopyWithImpl<$Res, EventMarvelResponse>;
   @useResult
   $Res call(
       {int? code,
@@ -53,9 +53,9 @@ abstract class $MarvelResponseCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$MarvelResponseCopyWithImpl<$Res, $Val extends MarvelResponse>
-    implements $MarvelResponseCopyWith<$Res> {
-  _$MarvelResponseCopyWithImpl(this._value, this._then);
+class _$EventMarvelResponseCopyWithImpl<$Res, $Val extends EventMarvelResponse>
+    implements $EventMarvelResponseCopyWith<$Res> {
+  _$EventMarvelResponseCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -120,7 +120,7 @@ class _$MarvelResponseCopyWithImpl<$Res, $Val extends MarvelResponse>
 
 /// @nodoc
 abstract class _$$_MarvelResponseCopyWith<$Res>
-    implements $MarvelResponseCopyWith<$Res> {
+    implements $EventMarvelResponseCopyWith<$Res> {
   factory _$$_MarvelResponseCopyWith(
           _$_MarvelResponse value, $Res Function(_$_MarvelResponse) then) =
       __$$_MarvelResponseCopyWithImpl<$Res>;
@@ -141,7 +141,7 @@ abstract class _$$_MarvelResponseCopyWith<$Res>
 
 /// @nodoc
 class __$$_MarvelResponseCopyWithImpl<$Res>
-    extends _$MarvelResponseCopyWithImpl<$Res, _$_MarvelResponse>
+    extends _$EventMarvelResponseCopyWithImpl<$Res, _$_MarvelResponse>
     implements _$$_MarvelResponseCopyWith<$Res> {
   __$$_MarvelResponseCopyWithImpl(
       _$_MarvelResponse _value, $Res Function(_$_MarvelResponse) _then)
@@ -223,7 +223,7 @@ class _$_MarvelResponse implements _MarvelResponse {
 
   @override
   String toString() {
-    return 'MarvelResponse(code: $code, status: $status, copyright: $copyright, attributionText: $attributionText, attributionHtml: $attributionHtml, etag: $etag, data: $data)';
+    return 'EventMarvelResponse(code: $code, status: $status, copyright: $copyright, attributionText: $attributionText, attributionHtml: $attributionHtml, etag: $etag, data: $data)';
   }
 
   @override
@@ -262,7 +262,7 @@ class _$_MarvelResponse implements _MarvelResponse {
   }
 }
 
-abstract class _MarvelResponse implements MarvelResponse {
+abstract class _MarvelResponse implements EventMarvelResponse {
   const factory _MarvelResponse(
       {final int? code,
       final String? status,

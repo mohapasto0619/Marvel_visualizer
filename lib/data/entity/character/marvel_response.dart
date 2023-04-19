@@ -4,15 +4,15 @@ import 'dart:convert';
 part 'marvel_response.freezed.dart';
 part 'marvel_response.g.dart';
 
-MarvelResponse? marvelResponseFromJson(String str) =>
-    MarvelResponse.fromJson(json.decode(str));
+CharacterMarvelResponse? marvelResponseFromJson(String str) =>
+    CharacterMarvelResponse.fromJson(json.decode(str));
 
-String marvelResponseToJson(MarvelResponse? data) =>
+String marvelResponseToJson(CharacterMarvelResponse? data) =>
     json.encode(data!.toJson());
 
 @freezed
-class MarvelResponse with _$MarvelResponse {
-  const factory MarvelResponse({
+class CharacterMarvelResponse with _$CharacterMarvelResponse {
+  const factory CharacterMarvelResponse({
     int? code,
     String? status,
     String? copyright,
@@ -22,6 +22,6 @@ class MarvelResponse with _$MarvelResponse {
     Data? data,
   }) = _MarvelResponse;
 
-  factory MarvelResponse.fromJson(Map<String, dynamic> json) =>
-      _$MarvelResponseFromJson(json);
+  factory CharacterMarvelResponse.fromJson(Map<String, dynamic> json) =>
+      _$CharacterMarvelResponseFromJson(json);
 }

@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:marvel_visualiser/module/home/bottom_bar_index_notifier.dart';
 import 'package:marvel_visualiser/router/app_router_names.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final bottomBarIndexNotifierProvider =
-    StateNotifierProvider<BottomBarIndexNotifier, int>((ref) {
-  return BottomBarIndexNotifier(0);
-});
+part 'view.g.dart';
+
+@Riverpod(keepAlive: false)
+class BottomBarIndexNotifier extends _$BottomBarIndexNotifier {
+  @override
+  int build() => 0;
+
+  void setPosition(int value) {
+    state = value;
+  }
+}
 
 class ScaffoldWihtBottomBar extends ConsumerWidget {
   const ScaffoldWihtBottomBar({super.key, required this.child});

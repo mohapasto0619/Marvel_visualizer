@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:marvel_visualiser/data/entity/comic/marvel_response.dart'
-    as comic;
-import 'package:marvel_visualiser/data/entity/event/marvel_response.dart'
-    as event;
-import 'package:marvel_visualiser/data/entity/character/marvel_response.dart'
-    as character;
-import 'package:marvel_visualiser/data/entity/character/result.dart'
-    as character;
-import 'package:marvel_visualiser/data/entity/creator/marvel_response.dart'
-    as creator;
+import 'package:marvel_visualiser/data/entity/character/marvel_response.dart';
+import 'package:marvel_visualiser/data/entity/comic/marvel_response.dart';
+import 'package:marvel_visualiser/data/entity/creator/marvel_response.dart';
+import 'package:marvel_visualiser/data/entity/event/marvel_response.dart';
 import 'package:marvel_visualiser/data/repository/character_repository.dart';
 import 'package:marvel_visualiser/data/repository/comic_repository.dart';
 import 'package:marvel_visualiser/data/repository/creator_repository.dart';
@@ -18,35 +12,38 @@ import 'package:marvel_visualiser/module/character_details/view.dart';
 import 'package:marvel_visualiser/widgets/description_view.dart';
 import 'package:marvel_visualiser/widgets/error_view.dart';
 import 'package:marvel_visualiser/widgets/section_list_view.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final _comicProvider =
-    FutureProvider.family<comic.MarvelResponse?, int>(((ref, id) {
-  final comicRepository = ref.read(comicRepositoryProvider);
+part 'view.g.dart';
+
+@Riverpod(keepAlive: false)
+Future<ComicMarvelResponse?> _comic(_ComicRef ref, int id) {
+  final comicRepository = ref.watch(comicRepositoryProvider);
   return comicRepository.getComic(id: id);
-}));
+}
 
-final _eventsProvider =
-    FutureProvider.family<event.MarvelResponse?, String>(((ref, collectionUri) {
-  final eventRepository = ref.read(eventRepositoryProvider);
+@Riverpod(keepAlive: false)
+Future<EventMarvelResponse?> _events(_EventsRef ref, String collectionUri) {
+  final eventRepository = ref.watch(eventRepositoryProvider);
   return eventRepository.getEventsCollectionForCharacter(
       collectionUri: collectionUri);
-}));
+}
 
-final _charactersrovider =
-    FutureProvider.family<character.MarvelResponse?, String>(
-        ((ref, collectionUri) {
+@Riverpod(keepAlive: false)
+Future<CharacterMarvelResponse?> _characters(
+    _CharactersRef ref, String collectionUri) {
   final characterRepository = ref.read(characterRepositoryProvider);
   return characterRepository.getCharactersCollectionForComic(
       collectionUri: collectionUri);
-}));
+}
 
-final _creatorsProvider =
-    FutureProvider.family<creator.MarvelResponse?, String>(
-        ((ref, collectionUri) {
+@Riverpod(keepAlive: false)
+Future<CreatorMarvelResponse?> _creators(
+    _CreatorsRef ref, String collectionUri) {
   final creatorRepository = ref.read(creatorRepositoryProvider);
   return creatorRepository.getCreatorCollectionForCharacter(
       collectionUri: collectionUri);
-}));
+}
 
 class ComicDetailsView extends ConsumerWidget {
   const ComicDetailsView(
@@ -114,18 +111,18 @@ class ComicDetailsViewBody extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DescriptionView(description: description),
-            SectionListView<List<character.Result>>(
+            SectionListView(
                 collectionUri: firstCollectionUri,
                 sectionName: 'Characters',
-                provider: _charactersrovider),
-            SectionListView<List<creator.Result>>(
+                provider: _charactersProvider(firstCollectionUri)),
+            SectionListView(
                 collectionUri: secondCollectionUri,
                 sectionName: 'Creators',
-                provider: _creatorsProvider),
-            SectionListView<List<event.Result>>(
+                provider: _creatorsProvider(secondCollectionUri)),
+            SectionListView(
                 collectionUri: thirdCollectionUri,
                 sectionName: 'Events',
-                provider: _eventsProvider)
+                provider: _eventsProvider(thirdCollectionUri))
           ],
         ),
       ),

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
 import 'package:marvel_visualiser/data/entity/character/marvel_response.dart'
@@ -12,15 +11,21 @@ import 'package:marvel_visualiser/data/entity/event/marvel_response.dart'
     as event;
 import 'package:marvel_visualiser/data/entity/creator/marvel_response.dart'
     as creator;
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'api_client.g.dart';
 
 const baseUrl = 'https://gateway.marvel.com/v1/';
 const publicApiKey = '20e4d27ec981dc6fc91249da6265a01b';
 const privateApiKey = '047279423bf2733fb668332406baadfed4776a15';
 
-final apiClientProvider = Provider(((ref) => ApiClient()));
+@Riverpod(keepAlive: true)
+ApiClient apiClient(ApiClientRef ref) {
+  return ApiClient();
+}
 
 class ApiClient {
-  Future<character.MarvelResponse?> getCharacters(
+  Future<character.CharacterMarvelResponse?> getCharacters(
       {String baseUrl = baseUrl,
       Map<String, String>? headers,
       String query = '',
@@ -37,13 +42,14 @@ class ApiClient {
         headers: headers);
 
     if (response.statusCode == 200) {
-      return character.MarvelResponse.fromJson(jsonDecode(response.body));
+      return character.CharacterMarvelResponse.fromJson(
+          jsonDecode(response.body));
     } else {
       throw Exception("error can't fetch characters");
     }
   }
 
-  Future<character.MarvelResponse?> getCharacter(
+  Future<character.CharacterMarvelResponse?> getCharacter(
       {required int id,
       String baseUrl = baseUrl,
       Map<String, String>? headers,
@@ -54,13 +60,14 @@ class ApiClient {
     final response =
         await http.get(Uri.parse('$baseUrl$relativeUrl'), headers: headers);
     if (response.statusCode == 200) {
-      return character.MarvelResponse.fromJson(jsonDecode(response.body));
+      return character.CharacterMarvelResponse.fromJson(
+          jsonDecode(response.body));
     } else {
       throw Exception("error can't fetch characters");
     }
   }
 
-  Future<comic.MarvelResponse?> getComicsCollectionForCharacter(
+  Future<comic.ComicMarvelResponse?> getComicsCollectionForCharacter(
       {required String collectionUri,
       Map<String, String>? headers,
       int offset = 0}) async {
@@ -70,13 +77,13 @@ class ApiClient {
     final response =
         await http.get(Uri.parse('$collectionUri$keys'), headers: headers);
     if (response.statusCode == 200) {
-      return comic.MarvelResponse.fromJson(jsonDecode(response.body));
+      return comic.ComicMarvelResponse.fromJson(jsonDecode(response.body));
     } else {
       throw Exception("error can't fetch comics");
     }
   }
 
-  Future<serie.MarvelResponse?> getSeriesCollectionForCharacter(
+  Future<serie.SerieMarvelResponse?> getSeriesCollectionForCharacter(
       {required String collectionUri,
       Map<String, String>? headers,
       int offset = 0}) async {
@@ -86,13 +93,13 @@ class ApiClient {
     final response =
         await http.get(Uri.parse('$collectionUri$keys'), headers: headers);
     if (response.statusCode == 200) {
-      return serie.MarvelResponse.fromJson(jsonDecode(response.body));
+      return serie.SerieMarvelResponse.fromJson(jsonDecode(response.body));
     } else {
       throw Exception("error can't fetch series");
     }
   }
 
-  Future<serie.MarvelResponse?> getStoriesCollectionForCharacter(
+  Future<serie.SerieMarvelResponse?> getStoriesCollectionForCharacter(
       {required String collectionUri,
       Map<String, String>? headers,
       int offset = 0}) async {
@@ -102,13 +109,13 @@ class ApiClient {
     final response =
         await http.get(Uri.parse('$collectionUri$keys'), headers: headers);
     if (response.statusCode == 200) {
-      return serie.MarvelResponse.fromJson(jsonDecode(response.body));
+      return serie.SerieMarvelResponse.fromJson(jsonDecode(response.body));
     } else {
       throw Exception("error can't fetch stories");
     }
   }
 
-  Future<event.MarvelResponse?> getEventsCollectionForCharacter(
+  Future<event.EventMarvelResponse?> getEventsCollectionForCharacter(
       {required String collectionUri,
       Map<String, String>? headers,
       int offset = 0}) async {
@@ -118,13 +125,13 @@ class ApiClient {
     final response =
         await http.get(Uri.parse('$collectionUri$keys'), headers: headers);
     if (response.statusCode == 200) {
-      return event.MarvelResponse.fromJson(jsonDecode(response.body));
+      return event.EventMarvelResponse.fromJson(jsonDecode(response.body));
     } else {
       throw Exception("error can't fetch events");
     }
   }
 
-  Future<comic.MarvelResponse?> getComics(
+  Future<comic.ComicMarvelResponse?> getComics(
       {String baseUrl = baseUrl,
       Map<String, String>? headers,
       String query = '',
@@ -141,13 +148,13 @@ class ApiClient {
         headers: headers);
 
     if (response.statusCode == 200) {
-      return comic.MarvelResponse.fromJson(jsonDecode(response.body));
+      return comic.ComicMarvelResponse.fromJson(jsonDecode(response.body));
     } else {
       throw Exception("error can't fetch comics");
     }
   }
 
-  Future<comic.MarvelResponse?> getComic(
+  Future<comic.ComicMarvelResponse?> getComic(
       {required int id,
       String baseUrl = baseUrl,
       Map<String, String>? headers,
@@ -158,13 +165,13 @@ class ApiClient {
     final response =
         await http.get(Uri.parse('$baseUrl$relativeUrl'), headers: headers);
     if (response.statusCode == 200) {
-      return comic.MarvelResponse.fromJson(jsonDecode(response.body));
+      return comic.ComicMarvelResponse.fromJson(jsonDecode(response.body));
     } else {
       throw Exception("error can't fetch comic");
     }
   }
 
-  Future<character.MarvelResponse?> getcharactersCollectionForComic(
+  Future<character.CharacterMarvelResponse?> getcharactersCollectionForComic(
       {required String collectionUri,
       Map<String, String>? headers,
       int offset = 0}) async {
@@ -174,13 +181,14 @@ class ApiClient {
     final response =
         await http.get(Uri.parse('$collectionUri$keys'), headers: headers);
     if (response.statusCode == 200) {
-      return character.MarvelResponse.fromJson(jsonDecode(response.body));
+      return character.CharacterMarvelResponse.fromJson(
+          jsonDecode(response.body));
     } else {
       throw Exception("error can't fetch series");
     }
   }
 
-  Future<creator.MarvelResponse?> getcreatorCollectionForComic(
+  Future<creator.CreatorMarvelResponse?> getcreatorCollectionForComic(
       {required String collectionUri,
       Map<String, String>? headers,
       int offset = 0}) async {
@@ -190,7 +198,7 @@ class ApiClient {
     final response =
         await http.get(Uri.parse('$collectionUri$keys'), headers: headers);
     if (response.statusCode == 200) {
-      return creator.MarvelResponse.fromJson(jsonDecode(response.body));
+      return creator.CreatorMarvelResponse.fromJson(jsonDecode(response.body));
     } else {
       throw Exception("error can't fetch series");
     }

@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:marvel_visualiser/data/entity/character/marvel_response.dart'
-    as character;
-import 'package:marvel_visualiser/data/entity/character/url.dart';
-import 'package:marvel_visualiser/data/entity/comic/marvel_response.dart'
-    as comic;
-import 'package:marvel_visualiser/data/entity/serie/marvel_response.dart'
-    as serie;
-import 'package:marvel_visualiser/data/entity/event/marvel_response.dart'
-    as event;
+import 'package:marvel_visualiser/data/entity/character/marvel_response.dart';
+import 'package:marvel_visualiser/data/entity/comic/marvel_response.dart';
+import 'package:marvel_visualiser/data/entity/event/marvel_response.dart';
+import 'package:marvel_visualiser/data/entity/serie/marvel_response.dart';
 import 'package:marvel_visualiser/data/repository/character_repository.dart';
 import 'package:marvel_visualiser/data/repository/comic_repository.dart';
 import 'package:marvel_visualiser/data/repository/event_repository.dart';
@@ -16,33 +11,40 @@ import 'package:marvel_visualiser/widgets/description_view.dart';
 import 'package:marvel_visualiser/widgets/error_view.dart';
 import 'package:marvel_visualiser/widgets/footer_element_view.dart';
 import 'package:marvel_visualiser/widgets/section_list_view.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:marvel_visualiser/data/entity/character/url.dart' as character;
 
-final _characterProvider =
-    FutureProvider.family<character.MarvelResponse?, int>(((ref, id) {
+part 'view.g.dart';
+
+@Riverpod(keepAlive: false)
+Future<CharacterMarvelResponse?> _character(_CharacterRef ref, int id) {
   final characterRepository = ref.read(characterRepositoryProvider);
   return characterRepository.getCharacter(id: id);
-}));
+}
 
-final _comicsProvider =
-    FutureProvider.family<comic.MarvelResponse?, String>(((ref, collectionUri) {
+@Riverpod(keepAlive: false)
+Future<ComicMarvelResponse?> _comics(_ComicsRef ref, String collectionUri) {
   final comicRepository = ref.read(comicRepositoryProvider);
   return comicRepository.getComicsCollectionForCharacter(
-      collectionUri: collectionUri);
-}));
+    collectionUri: collectionUri,
+  );
+}
 
-final _seriesProvider =
-    FutureProvider.family<serie.MarvelResponse?, String>(((ref, collectionUri) {
+@Riverpod(keepAlive: false)
+Future<SerieMarvelResponse?> _series(_SeriesRef ref, String collectionUri) {
   final comicRepository = ref.read(comicRepositoryProvider);
   return comicRepository.getSeriesCollectionForCharacter(
-      collectionUri: collectionUri);
-}));
+    collectionUri: collectionUri,
+  );
+}
 
-final _eventsProvider =
-    FutureProvider.family<event.MarvelResponse?, String>(((ref, collectionUri) {
+@Riverpod(keepAlive: false)
+Future<EventMarvelResponse?> _events(_EventsRef ref, String collectionUri) {
   final eventRepository = ref.read(eventRepositoryProvider);
   return eventRepository.getEventsCollectionForCharacter(
-      collectionUri: collectionUri);
-}));
+    collectionUri: collectionUri,
+  );
+}
 
 class CharacterDetailsView extends ConsumerWidget {
   const CharacterDetailsView(
@@ -139,18 +141,18 @@ class CharacterDetailsViewBody extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DescriptionView(description: description),
-            SectionListView<List<comic.Result>>(
+            SectionListView(
                 collectionUri: firstCollectionUri,
                 sectionName: 'Comics',
-                provider: _comicsProvider),
-            SectionListView<List<serie.Result>>(
+                provider: _comicsProvider(firstCollectionUri)),
+            SectionListView(
                 collectionUri: secondCollectionUri,
                 sectionName: 'Series',
-                provider: _seriesProvider),
-            SectionListView<List<event.Result>>(
+                provider: _seriesProvider(secondCollectionUri)),
+            SectionListView(
                 collectionUri: thirdCollectionUri,
                 sectionName: 'Events',
-                provider: _eventsProvider)
+                provider: _eventsProvider(thirdCollectionUri))
           ],
         ),
       ),
@@ -161,7 +163,7 @@ class CharacterDetailsViewBody extends StatelessWidget {
 class CharacterDetailsViewFooter extends StatelessWidget {
   const CharacterDetailsViewFooter({super.key, required this.urls});
 
-  final List<Url> urls;
+  final List<character.Url> urls;
 
   @override
   Widget build(BuildContext context) {

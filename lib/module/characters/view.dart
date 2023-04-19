@@ -22,16 +22,16 @@ class Offset extends _$Offset {
   int build() => 0;
 }
 
-@Riverpod(keepAlive: false)
+@Riverpod(keepAlive: true)
 class SearchText extends _$SearchText {
   @override
   String build() => '';
 }
 
 @Riverpod(keepAlive: false)
-Future<character.MarvelResponse?> _charactersFetcher(
+Future<character.CharacterMarvelResponse?> _charactersFetcher(
     _CharactersFetcherRef ref) {
-  final characterRepository = ref.read(characterRepositoryProvider);
+  final characterRepository = ref.watch(characterRepositoryProvider);
   final offset = ref.watch(offsetProvider);
   final searchText = ref.watch(searchTextProvider);
   return characterRepository.getCharacters(query: searchText, offset: offset);

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:marvel_visualiser/module/character_details/view.dart';
 import 'package:marvel_visualiser/module/characters/view.dart';
@@ -8,11 +7,15 @@ import 'package:marvel_visualiser/module/comics/view.dart';
 import 'package:marvel_visualiser/module/home/view.dart';
 import 'package:marvel_visualiser/module/settings/view.dart';
 import 'package:marvel_visualiser/router/app_router_names.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final appRouterProvider = Provider((ref) {
+part 'app_router.g.dart';
+
+@Riverpod(keepAlive: true)
+GoRouter appRouter(AppRouterRef ref) {
   final router = AppRouter();
   return router.appRouter;
-});
+}
 
 class AppRouter {
   AppRouter() {

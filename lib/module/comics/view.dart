@@ -7,17 +7,29 @@ import 'package:marvel_visualiser/router/app_router_names.dart';
 import 'package:marvel_visualiser/widgets/error_view.dart';
 import 'package:marvel_visualiser/widgets/infinite_grid_list_view.dart';
 import 'package:marvel_visualiser/widgets/search_bar.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final _offsetProvider = StateProvider.autoDispose<int>(((ref) => 0));
+part 'view.g.dart';
 
-final _searchTextProvider = StateProvider.autoDispose<String>(((ref) => ''));
+@Riverpod(keepAlive: false)
+class _Offset extends _$Offset {
+  @override
+  int build() => 0;
+}
 
-final _comicsProvider = FutureProvider.autoDispose<MarvelResponse?>(((ref) {
-  final comicsRepository = ref.read(comicRepositoryProvider);
+@Riverpod(keepAlive: false)
+class _SearchText extends _$SearchText {
+  @override
+  String build() => '';
+}
+
+@Riverpod(keepAlive: false)
+Future<ComicMarvelResponse?> _comics(_ComicsRef ref) {
+  final comicsRepository = ref.watch(comicRepositoryProvider);
   final offset = ref.watch(_offsetProvider);
   final searchText = ref.watch(_searchTextProvider);
   return comicsRepository.getComics(query: searchText, offset: offset);
-}));
+}
 
 class ComicsView extends ConsumerStatefulWidget {
   const ComicsView({super.key});

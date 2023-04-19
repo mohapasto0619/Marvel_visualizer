@@ -12,11 +12,11 @@ class SectionListView<T extends List> extends ConsumerWidget {
 
   final String collectionUri;
   final String sectionName;
-  final FutureProviderFamily<dynamic, String> provider;
+  final AutoDisposeFutureProvider<dynamic> provider;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final response = ref.watch(provider(collectionUri));
+    final response = ref.watch(provider);
     return response.when(data: ((data) {
       final results = data?.data?.results;
       return Card(
